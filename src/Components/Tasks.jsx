@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { AddIcon, TimeIcon } from '@chakra-ui/icons';
+import { useEffectOnce } from 'usehooks-ts';
 
 const Tasks = () => {
   const [addedTasks, setAddedTasks] = useState(false);
@@ -31,7 +32,7 @@ const Tasks = () => {
   const [taskTitleValue, setTaskTitleValue] = useState('');
   const [taskDescriptionValue, setTaskDescriptionValue] = useState('');
   const [taskDeadlineValue, setTaskDeadlineValue] = useState('');
-  const [tasksList] = useState([]);
+  const [savedTasks, setSavedTasks] = useState([]);
 
   const handleTitleChange = (event) => {
     setTaskTitleValue(event.target.value);
@@ -52,17 +53,22 @@ const Tasks = () => {
       deadline: taskDeadlineValue,
     };
 
-    tasksList.push(newTaskObject);
+    const myTaskArray = [...savedTasks, newTaskObject];
+    window.localStorage.setItem('lsTasks', JSON.stringify(myTaskArray));
+    let myTasks = window.localStorage.getItem('lsTasks');
+    setSavedTasks(JSON.parse(myTasks));
 
     setAddedTasks(true);
     onClose();
   };
 
-  useEffect(() => {
-    if (tasksList.length > 0) {
+  useEffectOnce(() => {
+    if ('lsTasks' in localStorage) {
       setAddedTasks(true);
+      let myTasks = window.localStorage.getItem('lsTasks');
+      setSavedTasks(JSON.parse(myTasks));
     }
-  }, [tasksList]);
+  });
 
   return (
     <>
@@ -82,13 +88,14 @@ const Tasks = () => {
               height={'20px'}
               rounded={'xl'}
               onClick={onOpen}
+              color={'white'}
             />
           </Box>
         </HStack>
       </Flex>
       <Box mt={'20px'}>
         {addedTasks ? (
-          tasksList.map((task) => (
+          savedTasks.map((task) => (
             <Card bg={'whiteAlpha.300'} borderLeft={'15px solid #604977'} key={task.title} mb={'10px'}>
               <CardBody>
                 <Heading size={'xs'} textTransform={'uppercase'}>
@@ -110,7 +117,7 @@ const Tasks = () => {
               <Heading size={'xs'} textTransform={'uppercase'}>
                 No tasks added
               </Heading>
-              <Button mt={'10px'} bg={'#2F2F2F'} onClick={onOpen}>
+              <Button mt={'10px'} bg={'#2F2F2F'} onClick={onOpen} color={'white'}>
                 Add Task
               </Button>
             </CardBody>

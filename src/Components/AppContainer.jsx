@@ -1,19 +1,4 @@
-import {
-  Box,
-  Center,
-  Container,
-  Flex,
-  SimpleGrid,
-  Stack,
-  VStack,
-  HStack,
-  Button,
-  CheckBox,
-  IconButton,
-  Input,
-  Switch,
-  Textarea,
-} from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import NavBar from './NavBar';
 import ToDos from './ToDos';
 
