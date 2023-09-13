@@ -20,9 +20,10 @@ import {
   Textarea,
   FormLabel,
   FormControl,
+  CardFooter,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { AddIcon, TimeIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, TimeIcon } from '@chakra-ui/icons';
 import { useEffectOnce } from 'usehooks-ts';
 
 const Tasks = () => {
@@ -51,6 +52,7 @@ const Tasks = () => {
       title: taskTitleValue,
       description: taskDescriptionValue,
       deadline: taskDeadlineValue,
+      id: savedTasks.length,
     };
 
     const myTaskArray = [...savedTasks, newTaskObject];
@@ -62,10 +64,17 @@ const Tasks = () => {
     onClose();
   };
 
+  const removeTask = (id) => {
+    const updatedTasks = savedTasks.filter((entry) => entry.id !== id);
+    setSavedTasks(updatedTasks);
+    window.localStorage.setItem('lsTasks', JSON.stringify(updatedTasks));
+  };
+
   useEffectOnce(() => {
     if ('lsTasks' in localStorage) {
       setAddedTasks(true);
       let myTasks = window.localStorage.getItem('lsTasks');
+
       setSavedTasks(JSON.parse(myTasks));
     }
   });
@@ -96,18 +105,23 @@ const Tasks = () => {
       <Box mt={'20px'}>
         {addedTasks ? (
           savedTasks.map((task) => (
-            <Card bg={'whiteAlpha.300'} borderLeft={'15px solid #604977'} key={task.title} mb={'10px'}>
+            <Card bg={'whiteAlpha.300'} borderLeft={'15px solid #604977'} key={task.id} mb={'10px'}>
               <CardBody>
                 <Heading size={'xs'} textTransform={'uppercase'}>
                   {task.title}
                 </Heading>
                 <Text>{task.description}</Text>
-                <HStack>
-                  <Text>
-                    <TimeIcon />
-                  </Text>
-                  <Text mt={'4px'}>{task.deadline}</Text>
-                </HStack>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                  <HStack>
+                    <Text>
+                      <TimeIcon />
+                    </Text>
+                    <Text mt={'4px'}>{task.deadline}</Text>
+                  </HStack>
+                  <IconButton variant={'ghost'} onClick={() => removeTask(task.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
               </CardBody>
             </Card>
           ))
