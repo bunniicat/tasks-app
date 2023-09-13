@@ -20,9 +20,8 @@ import {
   Textarea,
   FormLabel,
   FormControl,
-  CardFooter,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AddIcon, DeleteIcon, TimeIcon } from '@chakra-ui/icons';
 import { useEffectOnce } from 'usehooks-ts';
 
